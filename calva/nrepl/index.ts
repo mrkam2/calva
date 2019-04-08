@@ -21,7 +21,7 @@ export class NReplClient {
 
     /** Tracks all sessions */
     sessions: {[id: string]: NReplSession} = {};
-    
+
     ns: string = "user";
 
     private constructor(socket: net.Socket) {
@@ -64,14 +64,14 @@ export class NReplClient {
 
     /**
      * Create a new NRepl client
-     * 
+     *
      * TODO - should just be a toplevel nrepl.createClient()
      */
     static create(opts: { host: string, port: number }) {
         return new Promise<NReplClient>((resolve, reject) => {
 
             let socket = net.createConnection(opts, () => {
-                
+
                 let nsId = client.nextId
                 let cloneId = client.nextId;
                 let describeId = client.nextId;
@@ -96,7 +96,7 @@ export class NReplClient {
                     }
                 })
                 client.encoder.write({ "op": "eval", code: "*ns*", "id": nsId });
-                
+
             })
             let client = new NReplClient(socket);
         })
@@ -205,7 +205,7 @@ export class NReplSession {
 
         return evaluation;
     }
-    
+
     interrupt(interruptId: string) {
         let id = this.client.nextId;
         return new Promise<void>((resolve, reject) => {
@@ -231,7 +231,7 @@ export class NReplSession {
                 if(msg.out)
                     evaluation.out(msg.out)
                 if(msg.err)
-                    evaluation.out(msg.err)
+                    evaluation.err(msg.err)
                 if(msg.ex) {
                     this.stacktrace().then(ex => reject(ex));
                 }
